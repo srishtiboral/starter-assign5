@@ -3,6 +3,7 @@
 #include <cmath>
 using namespace std;
 
+// test
 /* Color of a light that is off and that is on. */
 const Color kLightOffColor( 64,  64,  64);
 const Color kLightOnColor (250, 250, 100);
