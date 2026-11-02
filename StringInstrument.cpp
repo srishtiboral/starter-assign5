@@ -4,14 +4,25 @@
 using namespace std;
 
 StringInstrument::StringInstrument(double frequency) {
-    /* TODO: Delete this comment and the lines below it, then
-     * implement this function.
-     */
-    (void) frequency;
+    if (frequency <= 0) {
+        error("Frequency must be positive.");
+    }
+
+    _length = int(AudioSystem::sampleRate() / frequency);
+    if (_length <= 1) {
+        error("Frequency is too high for the sample rate.");
+    }
+
+    _waveform = new Sample[_length];
+    for (int i = 0; i < _length; i++) {
+        _waveform[i] = 0;
+    }
+
+    _cursor = 0;
 }
 
 StringInstrument::~StringInstrument() {
-    /* TODO: Delete this comment, then implement this function. */
+    delete[] _waveform;
 }
 
 void StringInstrument::pluck() {
@@ -208,6 +219,27 @@ PROVIDED_TEST("Milestone 4: nextSample wraps around properly.") {
      * scaled by 0.995.
      */
     EXPECT_EQUAL(instrument._waveform[1], 0.995 * (decayedTerm + moreDecayed) / 2.0);
+}
+
+STUDENT_TEST("Milestone 2: length rounds down when it isn't a whole number") {
+    AudioSystem::setSampleRate(10);
+    StringInstrument instrument(3);   // 10 / 3 = 3.33, rounds down to 3
+    EXPECT_EQUAL(instrument._length, 3);
+}
+
+STUDENT_TEST("Milestone 2: a length of 2 is allowed") {
+    AudioSystem::setSampleRate(10);
+    StringInstrument instrument(5);   // 10 / 5 = 2
+    EXPECT_EQUAL(instrument._length, 2);
+    EXPECT_EQUAL(instrument._waveform[0], 0);
+    EXPECT_EQUAL(instrument._waveform[1], 0);
+}
+
+STUDENT_TEST("Milestone 2: a fractional frequency works") {
+    AudioSystem::setSampleRate(10);
+    StringInstrument instrument(2.5);   // 10 / 2.5 = 4
+    EXPECT_EQUAL(instrument._length, 4);
+    EXPECT_EQUAL(instrument._cursor, 0);
 }
 
 /* * * * * Special Functions Below This Point * * * * */
