@@ -1,9 +1,8 @@
-Q1:
+Q1: How do the values of the member variables of allBalls[0] change from iteration to iteration? Specifically, what happens to the values of _id, _x, and _y?
+A1: The value of _id is unchanged with each iteration. However, the values of _x and _y change with every time we hit the "Continue" button. _x increases by 3 every time we iterate and _y decreases by 2 every time we iterate. 
 
-
-
-
-Q2:
+Q2: How do the values of the member variables of the stuck ball change from iteration to iteration? Contrast this to your answer to the previous question.
+A2: The values of the member variables of the stuck ball (id 3 for my chosen seed) changes because the 
 
 
 
