@@ -1,35 +1,40 @@
+
+WARMUP QUESTIONS
+
 Q1: How do the values of the member variables of allBalls[0] change from iteration to iteration? Specifically, what happens to the values of _id, _x, and _y?
-A1: The value of _id is unchanged with each iteration. However, the values of _x and _y change with every time we hit the "Continue" button. _x increases by 3 every time we iterate and _y decreases by 2 every time we iterate. 
+
+A1: The value of _id and _boundBounds are unchanged with each iteration. However, the values of _x and _y change with every time we hit the "Continue" button. _x increases by 3 every time we iterate and _y decreases by 2 every time we iterate. _vx and _vy stay the same until the ball hits a wall, where there's a glitch and the velocity flips and heads back to the other side. 
+
 
 Q2: How do the values of the member variables of the stuck ball change from iteration to iteration? Contrast this to your answer to the previous question.
-A2: The values of the member variables of the stuck ball (id 3 for my chosen seed) changes because the 
+
+A2: For my chosen ball (id 3), the member variables for the most part stay the same. When we run the debugger, it hits the breakpoint at the line (_x += _vx), so all other member variables such as _id, _vx, _vy, and _y stay constant. With every iteration, the only variable that changes is _x, which flips between 958 and 963. This means that the ball with id 3 is flipping between being in bounds (x = 958), and out of bounds (x = 963), so it gets stuck in the edge. 
+
+
+Q3: After forcing the stuck ball to position (0, 0), does the ball move normally from there or does it stay stuck?
+
+A3: After forcing the stuck ball to position (0, 0), the ball's _y variable stays the same at 0. However, the ball's _x variable increments by 5 with each iteration. This is due to the _vx value, which is 5. This means that the ball is moving normally and is using its _vx and _vy for its motion. It does not stay stuck!
+
+
+Q4: On your system, what is the observed consequence of these memory errors: access an index outside the allocated array bounds? Delete same memory twice? Access memory after it has been deleted?
+
+A4: When trying to access an index that's outside the allocated array bounds, my computer doesn't crash and the program runs successfully when I just run it normally. When I try to delete the same memory twice, the program crashes and it says that Tone_Matrix quit unexpectedly. When I tried to access memory after it had been deleted, no errors were thrown but the test case failed, since it returned an empty string instead of the expected word. 
 
 
 
+STRING INSTRUMENT
 
-Q3:
+Q5. Suppose the sample rate is 8,000Hz and we want to simulate a string that vibrates at 1,000Hz. Tell us what values will be in the waveform array when the string is first created and when it is first plucked.
 
-
-
-
-Q4:
-
+A5. Array length = sample rate / frequency = 8000 / 1000 = 8.
+When the string is first created, all 8 values are 0: [0, 0, 0, 0, 0, 0, 0, 0]. When it’s plucked, the first half becomes +0.05 and the back half becomes −0.05: [0.05, 0.05, 0.05, 0.05, -0.05, -0.05, -0.05, -0.05]
 
 
+Q6. Now suppose you call nextSample four times on the string after it has been plucked. Tell us what values will be in the waveform array.
 
-Q5:
-
-
-
-
-Q6:
+A6.  [0.04975, 0.04975, 0.04975, 0, −0.05, −0.05, −0.05, −0.05]
 
 
+Q7. Suppose instead of updating the waveform buffer with values +0.05 and -0.05 when the string is plucked, we fill the buffer with values +0.25 and -0.25. Does this change the amplitude, frequency, or shape of the wave? Based on your answer, what do you expect you would hear differently when listening to the sound of this string?
 
-
-Q7:
-
-
-
-
-
+A7. This changes the amplitude, but not the frequency or the shape. The wave goes higher and lower (±0.25 instead of ±0.05), so the amplitude is 5 times bigger. The frequency stays the same because the array length doesn’t change, and the shape is still a square wave. So I would hear the same note, just louder.
