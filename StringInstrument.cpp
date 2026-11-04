@@ -1,4 +1,4 @@
-/* * File: StringInstrument.cpp
+/* File: StringInstrument.cpp
  * Names: Srishti Boral, Anika Mukherjee
  * Course: CS 106B
  * Description: This file implements StringInstrument, which simulates a
@@ -11,6 +11,14 @@
 #include "error.h"
 using namespace std;
 
+/*
+ * Creates a string that vibrates at the given frequency. It makes an array
+ * of sampleRate / frequency samples (rounded down), sets every sample to 0
+ * so the string starts at rest, and puts the cursor at the start.
+ * Parameter: frequency (how many times per second the string vibrates, in Hz)
+ * Errors: calls error if the frequency is 0 or negative, or if the array
+ * would have fewer than 2 samples.
+ */
 StringInstrument::StringInstrument(double frequency) {
     if (frequency <= 0) {
         error("Frequency must be positive.");
@@ -29,6 +37,8 @@ StringInstrument::StringInstrument(double frequency) {
     _cursor = 0;
 }
 
+/* Destructs leftover waveform array from constructor
+*/
 StringInstrument::~StringInstrument() {
     delete[] _waveform;
 }
@@ -51,11 +61,19 @@ void StringInstrument::pluck() {
     _cursor = 0;
 }
 
+/* Returns the next sample of the vibrating string. It saves the value at the
+ * cursor to return, replaces that value with 0.995 times the average of it and
+ * the next value (wrapping to the start at the end of the array), and moves
+ * the cursor forward one spot, also wrapping around.
+ *
+ * Returns: the sample that was at the cursor before it was updated
+ */
 Sample StringInstrument::nextSample() {
     Sample result = _waveform[_cursor];
     int next = (_cursor + 1) % _length;
     _waveform[_cursor] = 0.995 * (_waveform[_cursor] + _waveform[next]) / 2;
-    _cursor = next; return result;
+    _cursor = next;
+    return result;
 }
 
 /* * * * * Test Cases Below This Point * * * * */
@@ -278,6 +296,24 @@ STUDENT_TEST("Milestone 3: pluck with length 2") {
     instrument.pluck();
     EXPECT_EQUAL(instrument._waveform[0], 0.05);
     EXPECT_EQUAL(instrument._waveform[1], -0.05);
+}
+
+STUDENT_TEST("Milestone 4: nextSample returns the first value after pluck") {
+    AudioSystem::setSampleRate(4);
+    StringInstrument instrument(1);
+    instrument.pluck();
+    EXPECT_EQUAL(instrument.nextSample(), 0.05);
+    EXPECT_EQUAL(instrument._cursor, 1);
+}
+
+STUDENT_TEST("Milestone 4: cursor wraps back to 0") {
+    AudioSystem::setSampleRate(3);
+    StringInstrument instrument(1);
+    instrument.pluck();
+    instrument.nextSample();
+    instrument.nextSample();
+    instrument.nextSample();
+    EXPECT_EQUAL(instrument._cursor, 0);
 }
 
 /* * * * * Special Functions Below This Point * * * * */
