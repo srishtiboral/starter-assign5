@@ -24,9 +24,23 @@ StringInstrument::StringInstrument(double frequency) {
 StringInstrument::~StringInstrument() {
     delete[] _waveform;
 }
-
+/*
+ * Simulates plucking the string. Sets the first half of the waveform to
+ * +0.05 and the second half to -0.05 (a square wave), then moves the cursor
+ * back to the start. If the length is odd, the middle sample is -0.05.
+ * Does not allocate a new array; it overwrites the existing one.
+ */
 void StringInstrument::pluck() {
-    /* TODO: Delete this comment, then implement this function. */
+    int half = _length / 2;
+    for (int i = 0; i < _length; i++) {
+        if (i < half) {
+            _waveform[i] = 0.05;
+        }
+        else {
+            _waveform[i] = -0.05;
+        }
+    }
+    _cursor = 0;
 }
 
 Sample StringInstrument::nextSample() {
@@ -240,6 +254,22 @@ STUDENT_TEST("Milestone 2: a fractional frequency works") {
     StringInstrument instrument(2.5);   // 10 / 2.5 = 4
     EXPECT_EQUAL(instrument._length, 4);
     EXPECT_EQUAL(instrument._cursor, 0);
+}
+
+STUDENT_TEST("Milestone 3: pluck with an odd length") {
+    AudioSystem::setSampleRate(5);
+    StringInstrument instrument(1);
+    instrument.pluck();
+    EXPECT_EQUAL(instrument._waveform[0], 0.05);
+    EXPECT_EQUAL(instrument._waveform[4], -0.05);
+}
+
+STUDENT_TEST("Milestone 3: pluck with length 2") {
+    AudioSystem::setSampleRate(2);
+    StringInstrument instrument(1);
+    instrument.pluck();
+    EXPECT_EQUAL(instrument._waveform[0], 0.05);
+    EXPECT_EQUAL(instrument._waveform[1], -0.05);
 }
 
 /* * * * * Special Functions Below This Point * * * * */
