@@ -1,3 +1,11 @@
+/* * File: StringInstrument.cpp
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ * Description: This file implements StringInstrument, which simulates a
+ * plucked string using the Karplus-Strong algorithm. The constructor makes
+ * a waveform array based on the frequency, pluck fills it with a square wave,
+ * and nextSample returns samples while slowly averaging the wave so the sound fades like a real string.
+ */
 #include "Demos/AudioSystem.h"
 #include "StringInstrument.h"
 #include "error.h"
@@ -44,10 +52,10 @@ void StringInstrument::pluck() {
 }
 
 Sample StringInstrument::nextSample() {
-    /* TODO: Delete this comment and the lines below it, then
-     * implement this function.
-     */
-    return 0;
+    Sample result = _waveform[_cursor];
+    int next = (_cursor + 1) % _length;
+    _waveform[_cursor] = 0.995 * (_waveform[_cursor] + _waveform[next]) / 2;
+    _cursor = next; return result;
 }
 
 /* * * * * Test Cases Below This Point * * * * */
