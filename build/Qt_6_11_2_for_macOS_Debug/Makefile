@@ -80,8 +80,7 @@ SOURCES       = ../../Ball.cpp \
 		../../GUI/SimpleTest.cpp \
 		../../GUI/TestDriver.cpp \
 		../../GUI/TestingGUI.cpp \
-		../../GUI/TextUtils.cpp \
-		moc_AudioSystem.cpp moc_AudioSystem.cpp
+		../../GUI/TextUtils.cpp moc_AudioSystem.cpp
 OBJECTS       = Ball.o \
 		DebuggerWarmup.o \
 		StringInstrument.o \
@@ -111,7 +110,6 @@ OBJECTS       = Ball.o \
 		TestDriver.o \
 		TestingGUI.o \
 		TextUtils.o \
-		moc_AudioSystem.o \
 		moc_AudioSystem.o
 DIST          = /Users/srishtiboral/Qt/6.11.2/macos/mkspecs/features/spec_pre.prf \
 		/Users/srishtiboral/Qt/6.11.2/macos/mkspecs/features/device_config.prf \
@@ -420,8 +418,7 @@ DIST          = /Users/srishtiboral/Qt/6.11.2/macos/mkspecs/features/spec_pre.pr
 		../../GUI/SimpleTest.cpp \
 		../../GUI/TestDriver.cpp \
 		../../GUI/TestingGUI.cpp \
-		../../GUI/TextUtils.cpp \
-		moc_AudioSystem.cpp
+		../../GUI/TextUtils.cpp
 QMAKE_TARGET  = Tone_Matrix
 DESTDIR       = ../../../starter-assign5/
 TARGET        = ../../../starter-assign5/Tone_Matrix.app/Contents/MacOS/Tone_Matrix
@@ -985,7 +982,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../Ball.h ../../StringInstrument.h ../../ToneMatrix.h ../../Demos/AudioSystem.h ../../Demos/DrawRectangle.h ../../Demos/GUIConfig.h ../../Demos/KeyboardGUI.h ../../Demos/Rectangle.h ../../Demos/RectangleCatcher.h ../../Demos/Sample.h ../../GUI/AutograderMain.h ../../GUI/BarrierGUI.h ../../GUI/Color.h ../../GUI/ConsoleMain.h ../../GUI/ConsoleUtils.h ../../GUI/Core.h ../../GUI/EmptyProblemHandler.h ../../GUI/Font.h ../../GUI/GColorConsole.h ../../GUI/GUIMain.h ../../GUI/GUIUtils.h ../../GUI/MemoryDiagnostics.h ../../GUI/MiniGUI.h ../../GUI/ProblemHandler.h ../../GUI/SimpleTest.h ../../GUI/TemporaryComponent.h ../../GUI/TestDriver.h ../../GUI/TestingGUI.h ../../GUI/TextUtils.h ../../GUI/Timer.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../Ball.cpp ../../DebuggerWarmup.cpp ../../StringInstrument.cpp ../../ToneMatrix.cpp ../../Demos/AudioSystem.cpp ../../Demos/BallDemoGUI.cpp ../../Demos/DrawRectangle.cpp ../../Demos/KeyboardGUI.cpp ../../Demos/Rectangle.cpp ../../Demos/RectangleCatcher.cpp ../../Demos/Sample.cpp ../../Demos/ToneMatrixGUI.cpp ../../GUI/AutograderMain.cpp ../../GUI/BarrierGUI.cpp ../../GUI/Color.cpp ../../GUI/ConsoleMain.cpp ../../GUI/ConsoleUtils.cpp ../../GUI/Core.cpp ../../GUI/EmptyProblemHandler.cpp ../../GUI/Font.cpp ../../GUI/GColorConsole.cpp ../../GUI/GUIMain.cpp ../../GUI/GUIUtils.cpp ../../GUI/MemoryDiagnostics.cpp ../../GUI/ProblemHandler.cpp ../../GUI/SimpleTest.cpp ../../GUI/TestDriver.cpp ../../GUI/TestingGUI.cpp ../../GUI/TextUtils.cpp moc_AudioSystem.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../Ball.cpp ../../DebuggerWarmup.cpp ../../StringInstrument.cpp ../../ToneMatrix.cpp ../../Demos/AudioSystem.cpp ../../Demos/BallDemoGUI.cpp ../../Demos/DrawRectangle.cpp ../../Demos/KeyboardGUI.cpp ../../Demos/Rectangle.cpp ../../Demos/RectangleCatcher.cpp ../../Demos/Sample.cpp ../../Demos/ToneMatrixGUI.cpp ../../GUI/AutograderMain.cpp ../../GUI/BarrierGUI.cpp ../../GUI/Color.cpp ../../GUI/ConsoleMain.cpp ../../GUI/ConsoleUtils.cpp ../../GUI/Core.cpp ../../GUI/EmptyProblemHandler.cpp ../../GUI/Font.cpp ../../GUI/GColorConsole.cpp ../../GUI/GUIMain.cpp ../../GUI/GUIUtils.cpp ../../GUI/MemoryDiagnostics.cpp ../../GUI/ProblemHandler.cpp ../../GUI/SimpleTest.cpp ../../GUI/TestDriver.cpp ../../GUI/TestingGUI.cpp ../../GUI/TextUtils.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -1282,10 +1279,7 @@ TestingGUI.o: ../../GUI/TestingGUI.cpp ../../GUI/TestingGUI.h \
 TextUtils.o: ../../GUI/TextUtils.cpp ../../GUI/TextUtils.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o TextUtils.o ../../GUI/TextUtils.cpp
 
-moc_AudioSystem.o: moc_AudioSystem.cpp ../../Demos/AudioSystem.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_AudioSystem.o moc_AudioSystem.cpp
-
-moc_AudioSystem.o: moc_AudioSystem.cpp ../../Demos/AudioSystem.h
+moc_AudioSystem.o: moc_AudioSystem.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_AudioSystem.o moc_AudioSystem.cpp
 
 ####### Install
