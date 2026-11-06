@@ -1,3 +1,13 @@
+/*
+ * File: ToneMatrix.cpp
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file implements the Tone Matrix, a grid of lights where
+ * each row plays a note. It handles mouse clicks and drags, draws the grid,
+ * plucks strings as it sweeps across the columns, and can resize the grid.
+ */
+
 #include "ToneMatrix.h"
 #include "Demos/DrawRectangle.h"
 #include <cmath>
@@ -7,6 +17,7 @@ using namespace std;
 /* Color of a light that is off and that is on. */
 const Color kLightOffColor( 64,  64,  64);
 const Color kLightOnColor (250, 250, 100);
+const int kSamplesPerColumn = 8192;
 
 /* Given a row index, returns the frequency of the note played by the
  * instrument at that index.
@@ -49,43 +60,102 @@ double frequencyForRow(int rowIndex) {
     return kBaseFrequency * pow(2.0, halfSteps / 12.0);
 }
 
+/*
+ * Creates a gridSize x gridSize Tone Matrix where each light is
+ * lightSize x lightSize pixels. All lights start off, and each row
+ * gets a StringInstrument tuned to that row's frequency.
+*/
 ToneMatrix::ToneMatrix(int gridSize, int lightSize) {
-    /* TODO: Delete this comment and the lines below it, then
-     * implement this function.
-     */
-    (void) gridSize;
-    (void) lightSize;
+   _gridSize = gridSize;
+    _lightSize = lightSize;
+   _grid = new bool[gridSize * gridSize];
+    for (int i = 0; i < gridSize * gridSize; i++) {
+       _grid[i] = false;
+    }
+
+    _instruments = new StringInstrument[gridSize];
+    for (int row = 0; row < gridSize; row++) {
+        _instruments[row] = StringInstrument(frequencyForRow(row));
+    }
 }
 
+/* Frees the lights array and the instruments array made in the constructor.
+ */
 ToneMatrix::~ToneMatrix() {
-    /* TODO: Delete this comment and implement this function. */
+    delete[] _grid;
+    delete[] _instruments;
 }
 
+/*
+ * Returns the index in _grid of the light under the mouse. y gives the row
+ * and x gives the column, and the light at (row, col) is stored at
+ * _gridSize * row + col.
+ */
+int ToneMatrix::indexFor(int mouseX, int mouseY) const {
+    int row = mouseY / _lightSize;
+    int col = mouseX / _lightSize;
+    return _gridSize * row + col;
+}
+
+/*
+ * Finds the light under the mouse and toggles it. Also remembers whether
+ * the light was turned on or off so mouseDragged can do the same thing.
+ */
 void ToneMatrix::mousePressed(int mouseX, int mouseY) {
-    /* TODO: Delete this comment and the lines below it, then
-     * implement this function.
-     */
-    (void) mouseX;
-    (void) mouseY;
+    int index = indexFor(mouseX, mouseY);
+    _grid[index] = !_grid[index];
+    _dragTurnsOn = _grid[index];
 }
 
+/*
+ * Sets the light under the mouse to match what the last mousePressed did.
+ * If that press turned a light on, this turns the light on. If it turned
+ * a light off, this turns the light off.
+ */
 void ToneMatrix::mouseDragged(int mouseX, int mouseY) {
-    /* TODO: Delete this comment and the lines below it, then
-     * implement this function.
-     */
-    (void) mouseX;
-    (void) mouseY;
+    int index = indexFor(mouseX, mouseY);
+    _grid[index] = _dragTurnsOn;
 }
 
+/*
+ * Draws every light in the grid as a square. Lights that are on are drawn
+ * in the on color and lights that are off are drawn in the off color.
+ */
 void ToneMatrix::draw() const {
-    /* TODO: Delete this comment and implement this function. */
+    for (int row = 0; row < _gridSize; row++) {
+        for (int col = 0; col < _gridSize; col++) {
+            Rectangle rect = { col * _lightSize, row * _lightSize, _lightSize, _lightSize };
+            if (_grid[_gridSize * row + col]) {
+                drawRectangle(rect, kLightOnColor);
+            }
+            else { drawRectangle(rect, kLightOffColor);
+            }
+        }
+    }
 }
 
+/*
+ * Returns the next sound sample. On the first call, and every 8192nd call
+ * after that, it plucks the strings for the lights that are on in the
+ * current column and moves to the next column. Every call adds up the next
+ * sample from every instrument and returns the total.
+ */
 Sample ToneMatrix::nextSample() {
-    /* TODO: Delete this comment and the lines below it, then
-     * implement this function.
-     */
-    return 0;
+    if (_samplesUntilPluck == 0) {
+        for (int row = 0; row < _gridSize; row++) {
+            if (_grid[_gridSize * row + _currentCol]) {
+                _instruments[row].pluck();
+            }
+        } _currentCol = (_currentCol + 1) % _gridSize;
+        _samplesUntilPluck = kSamplesPerColumn;
+    }
+
+    _samplesUntilPluck--;
+    Sample total = 0;
+    for (int row = 0; row < _gridSize; row++) {
+        total += _instruments[row].nextSample();
+    }
+    return total;
 }
 
 void ToneMatrix::resize(int newGridSize) {
@@ -1204,4 +1274,35 @@ PROVIDED_TEST("Milestone 5: resize() resets the left-to-right sweep.") {
     /* The next one, though, should trigger something. */
     double result = matrix.nextSample();
     EXPECT_GREATER_THAN(result, 0);
+}
+
+//STUDENT TESTS
+
+STUDENT_TEST("Milestone 2: mousePressed saves that it turned a light on") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(4, 2); matrix.mousePressed(1, 1);
+    EXPECT_EQUAL(matrix._dragTurnsOn, true);
+}
+
+STUDENT_TEST("Milestone 2: mouseDragged turns on the next light") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(4, 2);
+    matrix.mousePressed(1, 1);
+    matrix.mouseDragged(3, 1);
+    EXPECT_EQUAL(matrix._grid[1], true);
+}
+
+STUDENT_TEST("Milestone 4: starts at column 0") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(4, 2);
+    EXPECT_EQUAL(matrix._currentCol, 0);
+    EXPECT_EQUAL(matrix._samplesUntilPluck, 0);
+}
+
+STUDENT_TEST("Milestone 4: one nextSample moves to column 1") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(4, 2);
+    matrix.nextSample();
+    EXPECT_EQUAL(matrix._currentCol, 1);
+    EXPECT_EQUAL(matrix._samplesUntilPluck, 8191);
 }

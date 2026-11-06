@@ -52,9 +52,20 @@ private:
     bool* _grid = nullptr;
     StringInstrument* _instruments = nullptr;
 
-    /* Friendly reminder to follow the convention of adding an underscore
-     * in front of any private member variables you declare!
+    /* True if the last mousePressed turned a light on, false if it
+     * turned a light off. mouseDragged uses this to know what to do.
      */
+    bool _dragTurnsOn = false;
+
+    //The column that gets plucked next.
+    int _currentCol = 0;
+
+    /* How many more calls to nextSample until the next column gets plucked.
+     * Starts at 0 so the very first call plucks. */
+    int _samplesUntilPluck = 0;
+
+    // Returns the index in _grid of the light under the mouse.
+    int indexFor(int mouseX, int mouseY) const;
 
     /* Allow SimpleTest test cases to read private fields. */
     ALLOW_TEST_ACCESS();

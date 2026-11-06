@@ -14,6 +14,7 @@ A2: For my chosen ball (id 3), the member variables for the most part stay the s
 Q3: After forcing the stuck ball to position (0, 0), does the ball move normally from there or does it stay stuck?
 
 A3: After forcing the stuck ball to position (0, 0), the ball's _y variable stays the same at 0. However, the ball's _x variable increments by 5 with each iteration. This is due to the _vx value, which is 5. This means that the ball is moving normally and is using its _vx and _vy for its motion. It does not stay stuck!
+The ball got stuck because it started partly past the right edge. Each move, it’s out of bounds, so _vx flips. But moving 5 pixels back still leaves it out of bounds, so _vx flips again, and it goes back and forth between 958 and 963 forever. To fix it, the starting position should be picked so the whole ball is inside the window/
 
 
 Q4: On your system, what is the observed consequence of these memory errors: access an index outside the allocated array bounds? Delete same memory twice? Access memory after it has been deleted?

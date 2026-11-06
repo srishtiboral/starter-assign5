@@ -4,7 +4,8 @@
  * Description: This file implements StringInstrument, which simulates a
  * plucked string using the Karplus-Strong algorithm. The constructor makes
  * a waveform array based on the frequency, pluck fills it with a square wave,
- * and nextSample returns samples while slowly averaging the wave so the sound fades like a real string.
+ * and nextSample returns samples while slowly
+ * averaging the wave so the sound fades like a real string.
  */
 #include "Demos/AudioSystem.h"
 #include "StringInstrument.h"
