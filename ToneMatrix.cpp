@@ -13,7 +13,6 @@
 #include <cmath>
 using namespace std;
 
-// test
 /* Color of a light that is off and that is on. */
 const Color kLightOffColor( 64,  64,  64);
 const Color kLightOnColor (250, 250, 100);
@@ -66,11 +65,11 @@ double frequencyForRow(int rowIndex) {
  * gets a StringInstrument tuned to that row's frequency.
 */
 ToneMatrix::ToneMatrix(int gridSize, int lightSize) {
-   _gridSize = gridSize;
+    _gridSize = gridSize;
     _lightSize = lightSize;
-   _grid = new bool[gridSize * gridSize];
+    _grid = new bool[gridSize * gridSize];
     for (int i = 0; i < gridSize * gridSize; i++) {
-       _grid[i] = false;
+        _grid[i] = false;
     }
 
     _instruments = new StringInstrument[gridSize];
@@ -128,7 +127,8 @@ void ToneMatrix::draw() const {
             if (_grid[_gridSize * row + col]) {
                 drawRectangle(rect, kLightOnColor);
             }
-            else { drawRectangle(rect, kLightOffColor);
+            else {
+                drawRectangle(rect, kLightOffColor);
             }
         }
     }
@@ -146,7 +146,8 @@ Sample ToneMatrix::nextSample() {
             if (_grid[_gridSize * row + _currentCol]) {
                 _instruments[row].pluck();
             }
-        } _currentCol = (_currentCol + 1) % _gridSize;
+        }
+        _currentCol = (_currentCol + 1) % _gridSize;
         _samplesUntilPluck = kSamplesPerColumn;
     }
 
@@ -158,11 +159,53 @@ Sample ToneMatrix::nextSample() {
     return total;
 }
 
+/*
+ * Changes the grid's size to newGridSize x newGridSize. The instruments and lights
+ * that fit in the new size are kept and the new rows are initialized with new instruments
+ * and new lights. The sweep goes back to the first column.
+ */
 void ToneMatrix::resize(int newGridSize) {
-    /* TODO: Delete this comment and the lines below it, then
-     * implement this function.
-     */
-    (void) newGridSize;
+    if (newGridSize <= 0) {
+        error("Grid size must be > 0");
+    }
+
+    int overlap; // holds the value of how many rows/cols exist in old & new grids
+    if (newGridSize < _gridSize) {
+        overlap = newGridSize;
+    } else {
+        overlap = _gridSize;
+    }
+
+    // part 1: keep instruments that fit rows or make new ones
+    StringInstrument* newInstruments = new StringInstrument[newGridSize];
+    for (int row = 0; row < newGridSize; row++) {
+        if (row < overlap) {
+            newInstruments[row] = _instruments[row];
+        } else {
+            newInstruments[row] = StringInstrument(frequencyForRow(row));
+        }
+    }
+    delete[] _instruments; // handle memory allocation
+    _instruments = newInstruments;
+
+    // part 2: keep old lights at current state, start new lights "off"
+    bool* newGrid = new bool[newGridSize * newGridSize];
+    for (int row = 0; row < newGridSize; row++) {
+        for (int col = 0; col < newGridSize; col++) {
+            if ((row < overlap) && (col < overlap)) {
+                newGrid[newGridSize * row + col] = _grid[_gridSize * row + col];
+            } else {
+                newGrid[newGridSize * row + col] = false;
+            }
+        }
+    }
+    delete[] _grid; // handle memory
+    _grid = newGrid;
+
+    _gridSize = newGridSize; // only do this after making both copies
+
+    _currentCol = 0;
+    _samplesUntilPluck = 0; // reset sweep
 }
 
 /* * * * * Test Cases Below This Point * * * * */
@@ -1280,8 +1323,20 @@ PROVIDED_TEST("Milestone 5: resize() resets the left-to-right sweep.") {
 
 STUDENT_TEST("Milestone 2: mousePressed saves that it turned a light on") {
     AudioSystem::setSampleRate(44100);
-    ToneMatrix matrix(4, 2); matrix.mousePressed(1, 1);
+    ToneMatrix matrix(4, 2);
+    matrix.mousePressed(1, 1);
     EXPECT_EQUAL(matrix._dragTurnsOn, true);
+}
+
+STUDENT_TEST("Milestone 2: mousePressed on a lit light turns it off") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(4, 2);
+    matrix._grid[0] = true;
+    matrix._grid[1] = true;
+    matrix.mousePressed(1, 1); //turn off top left
+    EXPECT_EQUAL(matrix._dragTurnsOn, false);
+    matrix.mouseDragged(3, 1);
+    EXPECT_EQUAL(matrix._grid[1], false);
 }
 
 STUDENT_TEST("Milestone 2: mouseDragged turns on the next light") {
@@ -1306,3 +1361,32 @@ STUDENT_TEST("Milestone 4: one nextSample moves to column 1") {
     EXPECT_EQUAL(matrix._currentCol, 1);
     EXPECT_EQUAL(matrix._samplesUntilPluck, 8191);
 }
+
+STUDENT_TEST("Milestone 5: resize() errors") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(4, 2);
+    EXPECT_ERROR(matrix.resize(0));
+    EXPECT_ERROR(matrix.resize(-3));
+}
+
+STUDENT_TEST("Milestone 5: showing how lights get discarded after shrinking, don't come back") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(3, 2);
+    matrix._grid[8] = true;
+    matrix.resize(2);
+    matrix.resize(3);
+    EXPECT_EQUAL(matrix._grid[8], false);
+}
+
+STUDENT_TEST("Milestone 5: resize() resets sweep fields") {
+    AudioSystem::setSampleRate(44100);
+    ToneMatrix matrix(4, 2);
+    for (int i = 0; i < 5000; i++) {
+        matrix.nextSample();
+    }
+    matrix.resize(6);
+    EXPECT_EQUAL(matrix._currentCol, 0);
+    EXPECT_EQUAL(matrix._samplesUntilPluck, 0);
+}
+
+

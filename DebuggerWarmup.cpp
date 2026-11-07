@@ -83,11 +83,11 @@ struct DataPoint {
  * access the deleted memory, it can actually look "ok", at least for a while
  * Uncomment the test case below to see what happens on your system.
  */
-PROVIDED_TEST("Test case that accesses memory after it was deleted") {
-   DataPoint* taskList = new DataPoint[4];
-   taskList[0].label = "sleep";
-   delete[] taskList;
-       /* taskList points to memory address that is now deleted, so
-          executing the line below accesses deleted memory */
-   EXPECT_EQUAL(taskList[0].label, "sleep"); // should label still be sleep? why or why not?
-}
+// PROVIDED_TEST("Test case that accesses memory after it was deleted") {
+//    DataPoint* taskList = new DataPoint[4];
+//    taskList[0].label = "sleep";
+//    delete[] taskList;
+//        /* taskList points to memory address that is now deleted, so
+//           executing the line below accesses deleted memory */
+//    EXPECT_EQUAL(taskList[0].label, "sleep"); // should label still be sleep? why or why not?
+// }

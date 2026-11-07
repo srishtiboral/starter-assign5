@@ -317,6 +317,7 @@ STUDENT_TEST("Milestone 4: cursor wraps back to 0") {
     EXPECT_EQUAL(instrument._cursor, 0);
 }
 
+
 /* * * * * Special Functions Below This Point * * * * */
 
 #include <algorithm>

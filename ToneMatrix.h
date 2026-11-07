@@ -66,6 +66,7 @@ private:
 
     // Returns the index in _grid of the light under the mouse.
     int indexFor(int mouseX, int mouseY) const;
+    void resetSweep();
 
     /* Allow SimpleTest test cases to read private fields. */
     ALLOW_TEST_ACCESS();
