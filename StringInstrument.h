@@ -1,3 +1,12 @@
+/*
+ * File: StringInstrument.h
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file declares the StringInstrument class, which simulates
+ * a plucked string. It stores the waveform array, its length, and the cursor
+ * position, and has functions to pluck the string and get the next sample.
+ */
 #pragma once
 
 #include "GUI/SimpleTest.h"

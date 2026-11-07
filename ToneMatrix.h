@@ -1,3 +1,12 @@
+/*
+ * File: ToneMatrix.h
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file declares the ToneMatrix class, a grid of lights where
+ * each row plays a note. It stores the lights, the instruments for each row,
+ * what the last mouse press did, and where the sweep is across the columns.
+ */
 #pragma once
 
 #include "Demos/Sample.h"
@@ -66,7 +75,6 @@ private:
 
     // Returns the index in _grid of the light under the mouse.
     int indexFor(int mouseX, int mouseY) const;
-    void resetSweep();
 
     /* Allow SimpleTest test cases to read private fields. */
     ALLOW_TEST_ACCESS();
